@@ -4055,7 +4055,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D5.0mm"
 			(at 132.08 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -4159,7 +4159,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 			(at 115.316 136.144 90)
 			(hide yes)
 			(show_name no)
@@ -4317,7 +4317,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 246.38 110.49 0)
 			(hide yes)
 			(show_name no)
@@ -4399,7 +4399,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
 			(at 21.2852 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -4713,7 +4713,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 			(at 87.884 51.054 90)
 			(hide yes)
 			(show_name no)
@@ -4795,7 +4795,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
 			(at 74.6252 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -4875,7 +4875,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x04_P2.54mm_Vertical"
 			(at 41.91 121.92 0)
 			(hide yes)
 			(show_name no)
@@ -4963,7 +4963,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 			(at 147.066 136.144 90)
 			(hide yes)
 			(show_name no)
@@ -5123,7 +5123,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
 			(at 32.7152 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -5362,7 +5362,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 			(at 133.096 136.144 90)
 			(hide yes)
 			(show_name no)
@@ -5444,7 +5444,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0207_L6.3mm_D2.5mm_P7.62mm_Horizontal"
 			(at 221.996 71.374 90)
 			(hide yes)
 			(show_name no)
@@ -5602,7 +5602,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
 			(at 242.57 124.1552 0)
 			(hide yes)
 			(show_name no)
@@ -5767,7 +5767,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
 			(at 221.9452 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -5847,7 +5847,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
 			(at 250.19 41.6052 0)
 			(hide yes)
 			(show_name no)
@@ -6005,7 +6005,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:C_Disc_D5.0mm_W2.5mm_P5.00mm"
 			(at 204.47 41.6052 0)
 			(hide yes)
 			(show_name no)
@@ -6362,7 +6362,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 208.28 27.94 0)
 			(hide yes)
 			(show_name no)
@@ -6444,7 +6444,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D5.0mm"
 			(at 114.3 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -6546,7 +6546,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Button_Switch_THT:SW_PUSH_6mm"
 			(at 254 27.94 0)
 			(hide yes)
 			(show_name no)
@@ -6706,7 +6706,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm"
 			(at 63.1952 64.77 0)
 			(hide yes)
 			(show_name no)
@@ -6788,7 +6788,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D5.0mm"
 			(at 146.05 124.46 0)
 			(hide yes)
 			(show_name no)
@@ -6890,7 +6890,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Buzzer_Beeper:Buzzer_12x9.5RM7.6"
 			(at 193.675 130.81 90)
 			(hide yes)
 			(show_name no)
@@ -7050,7 +7050,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "LED_THT:LED_D5.0mm"
 			(at 91.44 63.5 0)
 			(hide yes)
 			(show_name no)

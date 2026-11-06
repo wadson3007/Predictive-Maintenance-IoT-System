@@ -89,7 +89,6 @@
 		)
 		(capping no)
 		(filling no)
-		(zone_defaults)
 		(pcbplotparams
 			(layerselection 0x00000000_00000000_55555555_5755f5ff)
 			(plot_on_all_layers_selection 0x00000000_00000000_00000000_00000000)
@@ -13276,6 +13275,18 @@
 		(fill no)
 		(layer "Edge.Cuts")
 		(uuid "42bf72e4-4f72-4cfb-9f0f-4ca0f93a9453")
+	)
+	(gr_text "Made by Colombia"
+		(at 173.5 105.5 90)
+		(layer "F.SilkS")
+		(uuid "47206fed-e0b7-4298-afc1-d3bb5e3498fe")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+			(justify left bottom)
+		)
 	)
 	(segment
 		(start 148.4098 60.3748)
