@@ -1,4 +1,17 @@
-.history/
+# KiCad backups & local files
 *-backups/
-*.kicad_pro.lck
+*.bak
+*.kicad_pcb-bak
+~*.lck
+*.kicad_prl
 fp-info-cache
+
+# Freerouting temp
+*.dsn
+*.ses
+
+# Loose gerbers/drills — keep only the .zip for fabrication
+hardware/gerbers/**/*.gbr
+hardware/gerbers/**/*.gbrjob
+hardware/gerbers/**/*.drl
+.history/
