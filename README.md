@@ -99,4 +99,33 @@ The gateway forwards every reading to the cloud over **MQTT**, so the motor data
 
 - D-: GPIO19
 - D+: GPIO20
-- 
+
+## Screenshots
+
+### Sensor Node
+
+**3D Render**
+
+![Sensor Node 3D](docs/images/sensor-node.png)
+
+**PCB Layout**
+
+![Sensor Node PCB](docs/images/sensor-node-PCB.png)
+
+**Schematic**
+
+![Sensor Node Schematic](docs/images/sensor-node-schematics.png)
+
+### Gateway
+
+**3D Render**
+
+![Gateway 3D](docs/images/gateway.png)
+
+**PCB Layout**
+
+![Gateway PCB](docs/images/gateway-PCB.png)
+
+**Schematic**
+
+![Gateway Schematic](docs/images/gateway-schematics.png)
