@@ -30,6 +30,10 @@ fp-info-cache
 # Exported BOM files
 *.xml
 
+# KiCad lock & temp files
+*.lck
+*-unsaved-export-*
+
 ### KiCad Patch ###
 rescue-backup/
 

@@ -535,7 +535,7 @@
       "netlist": "",
       "plot": "/home/andresrr/Predictive-Maintenance-IoT-System/hardware/gerbers/sensor-node/",
       "specctra_dsn": "",
-      "step": "",
+      "step": "../cad/sensor-node-cad.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
