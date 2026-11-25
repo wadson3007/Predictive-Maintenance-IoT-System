@@ -19,6 +19,11 @@
 
 MAX6675 thermocouple(MAX_SCK, MAX_CS, MAX_SO);
 
+unsigned long lastTempRead = 0;
+const unsigned long tempReadInterval = 500;
+
+float pitch = 0, roll = 0, yaw = 0;
+
 struct SensorData {
   float temperature;
   float vibration;
@@ -36,7 +41,7 @@ void setup() {
   pinMode(CALIBRATION_BUTTON, INPUT_PULLUP);
   
 
-  Serial2.begin(9600, SERIAL_8N1, GY_TX, GY_RX);
+  Serial2.begin(115200, SERIAL_8N1, GY_TX, GY_RX);
 
   digitalWrite(BLUE_LED, HIGH);
   delay(300);
@@ -58,20 +63,39 @@ void setup() {
 }
 
 void loop() {
-  float temp = thermocouple.readCelsius();
+  if (millis() - lastTempRead >= tempReadInterval) {
+    lastTempRead = millis();
 
-  digitalWrite(BLUE_LED, LOW);
-  digitalWrite(RED_LED, LOW);
-  digitalWrite(YELLOW_LED, LOW);
-  digitalWrite(GREEN_LED, LOW);
+    float temp = thermocouple.readCelsius();
 
-  if (temp <= 15) {
-    digitalWrite(BLUE_LED, HIGH);
-  } else if (temp > 15 && temp <= 45) {
-    digitalWrite(GREEN_LED, HIGH);
-  } else if (temp > 45 && temp <= 60) {
-    digitalWrite(YELLOW_LED, HIGH);
-  } else if (temp > 60) {
-    digitalWrite(RED_LED, HIGH);
+    digitalWrite(BLUE_LED, LOW);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(YELLOW_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+
+    if (temp <= 15) {
+      digitalWrite(BLUE_LED, HIGH);
+      } else if (temp > 15 && temp <= 45) {
+      digitalWrite(GREEN_LED, HIGH);
+      } else if (temp > 45 && temp <= 60) {
+      digitalWrite(YELLOW_LED, HIGH);
+      } else if (temp > 60) {
+      digitalWrite(RED_LED, HIGH);
+      }
+  }
+
+  int raw = analogRead(POT);
+  int threshold = map(raw, 0, 4095, 0, 100);
+
+  if (Serial2.available() >= 8) {
+  if (Serial2.read() == 0xAA) {
+    byte datos[7];
+    Serial2.readBytes(datos, 7);
+    if (datos[6] == 0x55) {
+      pitch = (int16_t)(datos[0] << 8 | datos[1]) / 100.0;
+      roll  = (int16_t)(datos[2] << 8 | datos[3]) / 100.0;
+      yaw   = (int16_t)(datos[4] << 8 | datos[5]) / 100.0;
+    }
+  }
   }
 }
