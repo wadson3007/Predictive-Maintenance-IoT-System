@@ -35,8 +35,43 @@ void setup() {
 
   pinMode(CALIBRATION_BUTTON, INPUT_PULLUP);
   
+
+  Serial2.begin(9600, SERIAL_8N1, GY_TX, GY_RX);
+
+  digitalWrite(BLUE_LED, HIGH);
+  delay(300);
+  digitalWrite(BLUE_LED, LOW);
+
+  delay(300);
+  digitalWrite(RED_LED, HIGH);
+  delay(300);
+  digitalWrite(RED_LED, LOW);
+
+  digitalWrite(YELLOW_LED, HIGH);
+  delay(300);
+  digitalWrite(YELLOW_LED, LOW);
+
+  digitalWrite(GREEN_LED, HIGH);
+  delay(300);
+  digitalWrite(GREEN_LED, LOW);
+
 }
 
 void loop() {
-  
+  float temp = thermocouple.readCelsius();
+
+  digitalWrite(BLUE_LED, LOW);
+  digitalWrite(RED_LED, LOW);
+  digitalWrite(YELLOW_LED, LOW);
+  digitalWrite(GREEN_LED, LOW);
+
+  if (temp <= 15) {
+    digitalWrite(BLUE_LED, HIGH);
+  } else if (temp > 15 && temp <= 45) {
+    digitalWrite(GREEN_LED, HIGH);
+  } else if (temp > 45 && temp <= 60) {
+    digitalWrite(YELLOW_LED, HIGH);
+  } else if (temp > 60) {
+    digitalWrite(RED_LED, HIGH);
+  }
 }
