@@ -22,6 +22,9 @@ MAX6675 thermocouple(MAX_SCK, MAX_CS, MAX_SO);
 unsigned long lastTempRead = 0;
 const unsigned long tempReadInterval = 500;
 
+unsigned long lastVibWindow = 0;
+const unsigned long vibWindow = 1000;
+
 float pitch = 0, roll = 0, yaw = 0;
 
 struct SensorData {
@@ -31,8 +34,14 @@ struct SensorData {
   bool alarm;
 };
 
+float vibMin = 999, vibMax = -999;
+float vibration = 0;
+
+float temp = 0;
+
 void setup() {
   Serial.begin(115200);
+
   pinMode(RED_LED, OUTPUT);
   pinMode(YELLOW_LED, OUTPUT);
   pinMode(GREEN_LED, OUTPUT);
@@ -66,7 +75,7 @@ void loop() {
   if (millis() - lastTempRead >= tempReadInterval) {
     lastTempRead = millis();
 
-    float temp = thermocouple.readCelsius();
+    temp = thermocouple.readCelsius();
 
     digitalWrite(BLUE_LED, LOW);
     digitalWrite(RED_LED, LOW);
@@ -95,7 +104,18 @@ void loop() {
       pitch = (int16_t)(datos[0] << 8 | datos[1]) / 100.0;
       roll  = (int16_t)(datos[2] << 8 | datos[3]) / 100.0;
       yaw   = (int16_t)(datos[4] << 8 | datos[5]) / 100.0;
+      if (pitch > vibMax) vibMax = pitch;
+      if (pitch < vibMin) vibMin = pitch;
     }
   }
   }
+
+  if (millis() - lastVibWindow >= vibWindow) {
+  lastVibWindow = millis();
+  vibration = vibMax - vibMin;
+  vibMin = 999;
+  vibMax = -999;
+  }
+  
+  bool alarm = vibration > threshold;
 }
