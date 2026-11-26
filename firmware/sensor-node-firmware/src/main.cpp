@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <max6675.h>
+#include <esp_now.h>
+#include <WiFi.h>
 
 #define GY_RX 17
 #define GY_TX 18
@@ -25,9 +27,13 @@ const unsigned long tempReadInterval = 500;
 unsigned long lastVibWindow = 0;
 const unsigned long vibWindow = 1000;
 
+unsigned long lastSend = 0;
+const unsigned long sendInterval = 1000;
+
 float pitch = 0, roll = 0, yaw = 0;
 
-struct SensorData {
+struct SensorData
+{
   float temperature;
   float vibration;
   float threshold;
@@ -36,10 +42,14 @@ struct SensorData {
 
 float vibMin = 999, vibMax = -999;
 float vibration = 0;
+float vibNormal = 0;
 
 float temp = 0;
 
-void setup() {
+uint8_t gatewayMAC[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+
+void setup()
+{
   Serial.begin(115200);
 
   pinMode(RED_LED, OUTPUT);
@@ -48,9 +58,25 @@ void setup() {
   pinMode(BLUE_LED, OUTPUT);
 
   pinMode(CALIBRATION_BUTTON, INPUT_PULLUP);
-  
 
   Serial2.begin(115200, SERIAL_8N1, GY_TX, GY_RX);
+
+  WiFi.mode(WIFI_STA);
+  if (esp_now_init() != ESP_OK)
+  {
+    Serial.println("Error initializing ESP-NOW");
+    return;
+  }
+
+  esp_now_peer_info_t peerInfo;
+  memcpy(peerInfo.peer_addr, gatewayMAC, 6);
+  peerInfo.channel = 0;
+  peerInfo.encrypt = false;
+  if (esp_now_add_peer(&peerInfo) != ESP_OK)
+  {
+    Serial.println("Failed to add peer");
+    return;
+  }
 
   digitalWrite(BLUE_LED, HIGH);
   delay(300);
@@ -68,11 +94,12 @@ void setup() {
   digitalWrite(GREEN_LED, HIGH);
   delay(300);
   digitalWrite(GREEN_LED, LOW);
-
 }
 
-void loop() {
-  if (millis() - lastTempRead >= tempReadInterval) {
+void loop()
+{
+  if (millis() - lastTempRead >= tempReadInterval)
+  {
     lastTempRead = millis();
 
     temp = thermocouple.readCelsius();
@@ -82,40 +109,71 @@ void loop() {
     digitalWrite(YELLOW_LED, LOW);
     digitalWrite(GREEN_LED, LOW);
 
-    if (temp <= 15) {
+    if (temp <= 15)
+    {
       digitalWrite(BLUE_LED, HIGH);
-      } else if (temp > 15 && temp <= 45) {
+    }
+    else if (temp > 15 && temp <= 45)
+    {
       digitalWrite(GREEN_LED, HIGH);
-      } else if (temp > 45 && temp <= 60) {
+    }
+    else if (temp > 45 && temp <= 60)
+    {
       digitalWrite(YELLOW_LED, HIGH);
-      } else if (temp > 60) {
+    }
+    else if (temp > 60)
+    {
       digitalWrite(RED_LED, HIGH);
-      }
+    }
   }
 
   int raw = analogRead(POT);
   int threshold = map(raw, 0, 4095, 0, 100);
 
-  if (Serial2.available() >= 8) {
-  if (Serial2.read() == 0xAA) {
-    byte datos[7];
-    Serial2.readBytes(datos, 7);
-    if (datos[6] == 0x55) {
-      pitch = (int16_t)(datos[0] << 8 | datos[1]) / 100.0;
-      roll  = (int16_t)(datos[2] << 8 | datos[3]) / 100.0;
-      yaw   = (int16_t)(datos[4] << 8 | datos[5]) / 100.0;
-      if (pitch > vibMax) vibMax = pitch;
-      if (pitch < vibMin) vibMin = pitch;
+  if (Serial2.available() >= 8)
+  {
+    if (Serial2.read() == 0xAA)
+    {
+      byte datos[7];
+      Serial2.readBytes(datos, 7);
+      if (datos[6] == 0x55)
+      {
+        pitch = (int16_t)(datos[0] << 8 | datos[1]) / 100.0;
+        roll = (int16_t)(datos[2] << 8 | datos[3]) / 100.0;
+        yaw = (int16_t)(datos[4] << 8 | datos[5]) / 100.0;
+        if (pitch > vibMax)
+          vibMax = pitch;
+        if (pitch < vibMin)
+          vibMin = pitch;
+      }
     }
   }
+
+  if (millis() - lastVibWindow >= vibWindow)
+  {
+    lastVibWindow = millis();
+    vibration = vibMax - vibMin;
+    vibMin = 999;
+    vibMax = -999;
   }
 
-  if (millis() - lastVibWindow >= vibWindow) {
-  lastVibWindow = millis();
-  vibration = vibMax - vibMin;
-  vibMin = 999;
-  vibMax = -999;
+  if (digitalRead(CALIBRATION_BUTTON) == LOW)
+  {
+    vibNormal = vibration;
   }
-  
-  bool alarm = vibration > threshold;
+
+  bool alarm = (vibration - vibNormal) > threshold;
+
+  if (millis() - lastSend >= sendInterval)
+  {
+    lastSend = millis();
+
+    SensorData data;
+    data.temperature = temp;
+    data.vibration = vibration;
+    data.threshold = threshold;
+    data.alarm = alarm;
+
+    esp_now_send(gatewayMAC, (uint8_t *)&data, sizeof(data));
+  }
 }
