@@ -4,6 +4,8 @@
 #include <Wire.h>
 #include <WiFi.h>
 #include <esp_now.h>
+#include <PubSubClient.h>
+#include "secrets.h"
 
 #define BUZZER 4
 #define WIFI_LED 5
@@ -12,6 +14,8 @@
 #define OLED_SDA 8
 #define OLED_SCL 9
 #define ACK_BUTTON 15
+#define MQTT_SERVER "io.adafruit.com"
+#define MQTT_PORT 1883
 
 struct SensorData
 {
@@ -25,9 +29,32 @@ Adafruit_SSD1306 display(128, 64, &Wire, -1);
 
 SensorData received;
 
+
+WiFiClient espClient;
+PubSubClient mqtt(espClient);
+
 void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len)
 {
   memcpy(&received, incomingData, sizeof(received));
+}
+
+void connectMQTT()
+{
+  while (!mqtt.connected())
+  {
+    Serial.print("Connecting to MQTT...");
+    if (mqtt.connect("gateway-esp32", AIO_USERNAME, AIO_KEY))
+    {
+      Serial.println("connected");
+      digitalWrite(MQTT_LED, HIGH);
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.println(mqtt.state());
+      delay(2000);
+    }
+  }
 }
 
 unsigned long lastBeep = 0;
@@ -38,6 +65,9 @@ bool acknowledged = false;
 
 unsigned long lastDisplay = 0;
 const unsigned long displayInterval = 500;
+
+unsigned long lastPublish = 0;
+const unsigned long publishInterval = 10000;
 
 void setup()
 {
@@ -59,6 +89,22 @@ void setup()
   display.display();
 
   WiFi.mode(WIFI_STA);
+
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(500);
+    Serial.print(".");
+  }
+
+  digitalWrite(WIFI_LED, HIGH);
+  Serial.println("WiFi connected");
+
+  mqtt.setServer(MQTT_SERVER, MQTT_PORT);
+
+  connectMQTT();
+
   if (esp_now_init() != ESP_OK)
   {
     Serial.println("Error initializing ESP-NOW");
@@ -69,6 +115,11 @@ void setup()
 
 void loop()
 {
+  if (!mqtt.connected()) {
+  connectMQTT();
+}
+mqtt.loop();
+
   if (received.alarm)
   {
 
@@ -133,5 +184,22 @@ void loop()
       display.println("OK");
     }
     display.display();
+  }
+
+  if (millis() - lastPublish >= publishInterval) {
+    lastPublish = millis();
+
+  char tempStr[10];
+  snprintf(tempStr, sizeof(tempStr), "%.2f", received.temperature);
+  mqtt.publish(AIO_USERNAME "/feeds/temperature", tempStr);
+
+  char vibStr[10];
+  snprintf(vibStr, sizeof(vibStr), "%.2f", received.vibration);
+  mqtt.publish(AIO_USERNAME "/feeds/vibration", vibStr);
+
+
+  char alarmStr[4];
+  snprintf(alarmStr, sizeof(alarmStr), "%d", received.alarm);
+  mqtt.publish(AIO_USERNAME "/feeds/alarm", alarmStr);
   }
 }
