@@ -162,7 +162,7 @@ void loop()
     vibNormal = vibration;
   }
 
-  bool alarm = (vibration - vibNormal) > threshold;
+  bool alarm = ((vibration - vibNormal) > threshold) || (temp > 57);
 
   if (millis() - lastSend >= sendInterval)
   {
