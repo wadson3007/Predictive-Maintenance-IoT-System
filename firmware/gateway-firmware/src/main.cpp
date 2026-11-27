@@ -13,7 +13,8 @@
 #define OLED_SCL 9
 #define ACK_BUTTON 15
 
-struct SensorData {
+struct SensorData
+{
   float temperature;
   float vibration;
   float threshold;
@@ -24,7 +25,8 @@ Adafruit_SSD1306 display(128, 64, &Wire, -1);
 
 SensorData received;
 
-void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len) {
+void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, int len)
+{
   memcpy(&received, incomingData, sizeof(received));
 }
 
@@ -34,8 +36,11 @@ bool beepOn = false;
 
 bool acknowledged = false;
 
+unsigned long lastDisplay = 0;
+const unsigned long displayInterval = 500;
 
-void setup() {
+void setup()
+{
   Serial.begin(115200);
   pinMode(BUZZER, OUTPUT);
   pinMode(WIFI_LED, OUTPUT);
@@ -54,41 +59,79 @@ void setup() {
   display.display();
 
   WiFi.mode(WIFI_STA);
-  if (esp_now_init() != ESP_OK) {
+  if (esp_now_init() != ESP_OK)
+  {
     Serial.println("Error initializing ESP-NOW");
     return;
   }
   esp_now_register_recv_cb(OnDataRecv);
 }
 
-void loop() {
-  if (received.alarm) {
+void loop()
+{
+  if (received.alarm)
+  {
 
-    if (digitalRead(ACK_BUTTON) == LOW) {
+    if (digitalRead(ACK_BUTTON) == LOW)
+    {
       acknowledged = true;
     }
 
-    if (!acknowledged) {
-      if (millis() - lastBeep >= beepInterval) {
+    if (!acknowledged)
+    {
+      if (millis() - lastBeep >= beepInterval)
+      {
         lastBeep = millis();
         beepOn = !beepOn;
-        if (beepOn) {
+        if (beepOn)
+        {
           tone(BUZZER, 2000);
           digitalWrite(ALARM_LED, HIGH);
-        } else {
+        }
+        else
+        {
           noTone(BUZZER);
           digitalWrite(ALARM_LED, LOW);
         }
       }
-    } else {
+    }
+    else
+    {
       noTone(BUZZER);
       digitalWrite(ALARM_LED, HIGH);
     }
-
-  } else {                                 
+  }
+  else
+  {
     digitalWrite(ALARM_LED, LOW);
     noTone(BUZZER);
     acknowledged = false;
   }
-}
 
+  if (millis() - lastDisplay >= displayInterval)
+  {
+    lastDisplay = millis();
+
+    display.clearDisplay();
+    display.setCursor(0, 0);
+
+    display.println("Predictive Maintenance");
+
+    display.print("Temp: ");
+    display.print(received.temperature);
+    display.println(" C");
+
+    display.print("Vibration: ");
+    display.println(received.vibration);
+
+    if (received.alarm)
+    {
+      display.println("ALARM!");
+    }
+    else
+    {
+      display.println("OK");
+    }
+    display.display();
+  }
+}
