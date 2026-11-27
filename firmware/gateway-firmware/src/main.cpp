@@ -28,6 +28,13 @@ void OnDataRecv(const esp_now_recv_info_t *info, const uint8_t *incomingData, in
   memcpy(&received, incomingData, sizeof(received));
 }
 
+unsigned long lastBeep = 0;
+const unsigned long beepInterval = 500;
+bool beepOn = false;
+
+bool acknowledged = false;
+
+
 void setup() {
   Serial.begin(115200);
   pinMode(BUZZER, OUTPUT);
@@ -55,5 +62,33 @@ void setup() {
 }
 
 void loop() {
+  if (received.alarm) {
 
+    if (digitalRead(ACK_BUTTON) == LOW) {
+      acknowledged = true;
+    }
+
+    if (!acknowledged) {
+      if (millis() - lastBeep >= beepInterval) {
+        lastBeep = millis();
+        beepOn = !beepOn;
+        if (beepOn) {
+          tone(BUZZER, 2000);
+          digitalWrite(ALARM_LED, HIGH);
+        } else {
+          noTone(BUZZER);
+          digitalWrite(ALARM_LED, LOW);
+        }
+      }
+    } else {
+      noTone(BUZZER);
+      digitalWrite(ALARM_LED, HIGH);
+    }
+
+  } else {                                 
+    digitalWrite(ALARM_LED, LOW);
+    noTone(BUZZER);
+    acknowledged = false;
+  }
 }
+
